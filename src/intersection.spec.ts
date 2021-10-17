@@ -24,7 +24,25 @@ describe("intersection", () => {
       [{ id: "id-1" }, { id: "id-8" }, { id: "id-9" }],
     ];
     const result = intersection(input, (a) => a.id);
-    expect(result).toEqual(expect.arrayContaining([{ id: "id-1" }]));
+    expect(result).toEqual([{ id: "id-1" }]);
+  });
+  test("complex, multiple match", () => {
+    const input = [
+      [{ id: "id-1" }, { id: "id-2" }, { id: "id-3" }, { id: "id-3" }],
+      [{ id: "id-1" }, { id: "id-4" }, { id: "id-5" }, { id: "id-3" }],
+      [{ id: "id-1" }, { id: "id-6" }, { id: "id-7" }, { id: "id-3" }],
+      [{ id: "id-1" }, { id: "id-8" }, { id: "id-9" }, { id: "id-3" }],
+      [
+        { id: "id-1" },
+        { id: "id-8" },
+        { id: "id-9" },
+        { id: "id-3" },
+        { id: "id-3" },
+        { id: "id-3" },
+      ],
+    ];
+    const result = intersection(input, (a) => a.id);
+    expect(result).toEqual([{ id: "id-1" }, { id: "id-3" }]);
   });
   test("complex, single line should not match", () => {
     const input = [
@@ -34,6 +52,16 @@ describe("intersection", () => {
       [{ id: "id-1000" }, { id: "id-8" }, { id: "id-9" }],
     ];
     const result = intersection(input, (a) => a.id);
+    expect(result).toEqual([]);
+  });
+  test("empty input", () => {
+    const input = [] as number[][];
+    const result = intersection(input, (a) => a.toString());
+    expect(result).toEqual([]);
+  });
+  test("empty input arrays", () => {
+    const input = [[], [], []] as number[][];
+    const result = intersection(input, (a) => a.toString());
     expect(result).toEqual([]);
   });
 });

@@ -1,5 +1,5 @@
-interface IntersectionCount<T> {
-  [key: string]: { count: number; value: T };
+interface IntersectionMap<T> {
+  [key: string]: { seen: number[]; intersection: null | boolean; value: T };
 }
 
 interface GetKeyFn<T> {
@@ -7,25 +7,41 @@ interface GetKeyFn<T> {
 }
 
 export function intersection<T>(input: T[][], getKey: GetKeyFn<T>): T[] {
-  const merged = input.reduce((a, b) => [...a, ...b], []);
+  let intersectionMap: IntersectionMap<T> = {};
 
-  const intersectionCountMap = merged.reduce((a, b) => {
-    const key = getKey(b);
-    a[key] = a[key]
-      ? { count: a[key].count + 1, value: b }
-      : { count: 1, value: b };
-    return a;
-  }, {} as IntersectionCount<T>);
+  for (let i = 0; i < input.length; i++) {
+    for (let j = 0; j < input[i].length; j++) {
+      const element = input[i][j];
+      const key = getKey(element);
+      if (!intersectionMap[key]) {
+        intersectionMap[key] = { seen: [], intersection: null, value: element };
+      }
 
-  const filteredIntersections = Object.entries(intersectionCountMap).filter(
-    ([key, { count, value }]) => {
-      return count === input.length;
+      intersectionMap[key].seen.push(i);
     }
-  );
+  }
 
-  const intersectionValues = filteredIntersections.map(
-    ([key, { count, value }]) => value
-  );
+  const entries = Object.entries(intersectionMap);
 
-  return intersectionValues;
+  entries.forEach(([key, value]) => {
+    let appearence = 0;
+    for (let i = 0; i < input.length; i++) {
+      if (value.seen.includes(i)) {
+        appearence++;
+      }
+    }
+    const intersection = appearence === input.length;
+    value.intersection = intersection;
+  });
+
+  let elements: T[] = [];
+
+  entries.forEach(([key, element]) => {
+    if (element.intersection) {
+      const { value } = element;
+      elements.push(value);
+    }
+  });
+
+  return elements;
 }
