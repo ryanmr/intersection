@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "module": "commonjs",
+    "jsx": "preserve",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "allowJs": true,
+    "lib": [
+      "ES2017",
+      "dom"
+    ],
+    "rootDir": "./",
+    "moduleResolution": "node",
+    "outDir": "./build",    
+  },
+
+  "exclude": [
+    "node_modules",
+    "./build/**/*"
+  ]
+}
